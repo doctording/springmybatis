@@ -1,0 +1,114 @@
+buildscript {
+    ext {
+        springBootVersion = '2.0.1.RELEASE'
+        junitVersion = '4.12'
+        druidVersion = '1.0.14'
+    }
+    repositories {
+        mavenCentral()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath("gradle.plugin.com.arenagod.gradle:mybatis-generator-plugin:1.3")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+def getDbProperties = {
+    def properties = new Properties()
+    file("src/main/resources/application.properties").withInputStream { inputStream ->
+        properties.load(inputStream)
+    }
+    properties
+}
+configurations {
+    mybatisGenerator
+}
+
+task mybatisGenerate  << {
+    /*verbose = true
+    configFile = 'src/main/resources/mybatis/mybatis-generator.xml'*/
+
+    def properties = getDbProperties()
+    ant.properties['targetProject'] = projectDir.path
+    ant.properties['driverClass'] = properties.getProperty("spring.datasource.driverClassName")
+    ant.properties['connectionURL'] = properties.getProperty("spring.datasource.url")
+    ant.properties['userId'] = properties.getProperty("spring.datasource.username")
+    ant.properties['password'] = properties.getProperty("spring.datasource.password")
+    ant.properties['src_main_java'] = sourceSets.main.java.srcDirs[0].path
+    ant.properties['src_main_resources'] = sourceSets.main.resources.srcDirs[0].path
+    ant.properties['modelPackage'] = properties.getProperty("modelPackage")
+    ant.properties['mapperPackage'] = properties.getProperty("mapperPackage")
+    ant.properties['sqlMapperPackage'] = properties.getProperty("sqlMapperPackage")
+    ant.taskdef(
+            name: 'mbgenerator',
+            classname: 'org.mybatis.generator.ant.GeneratorAntTask',
+            classpath: configurations.mybatisGenerator.asPath
+    )
+    ant.mbgenerator(overwrite: true,
+            configfile: 'src/main/resources/mybatis/mybatis-generator.xml',
+            verbose: true) {
+        propertyset {
+            propertyref(name: 'targetProject')
+            propertyref(name: 'userId')
+            propertyref(name: 'driverClass')
+            propertyref(name: 'connectionURL')
+            propertyref(name: 'password')
+            propertyref(name: 'src_main_java')
+            propertyref(name: 'src_main_resources')
+            propertyref(name: 'modelPackage')
+            propertyref(name: 'mapperPackage')
+            propertyref(name: 'sqlMapperPackage')
+        }
+    }
+}
+
+dependencies {
+    compile "org.projectlombok:lombok:1.16.16"
+    compile "mysql:mysql-connector-java:5.1.16"
+    compile group: 'org.mybatis.generator', name: 'mybatis-generator-core', version: '1.3.3'
+    compile group: 'org.mybatis.generator', name: 'mybatis-generator-maven-plugin', version: '1.3.2'
+
+    compile('org.springframework.boot:spring-boot-starter-jdbc')
+    compile('org.springframework.boot:spring-boot-starter-web')
+    compile('org.mybatis.spring.boot:mybatis-spring-boot-starter:1.3.2')
+    // mybatisGenerator的依赖
+    mybatisGenerator 'mysql:mysql-connector-java:5.1.16'
+    mybatisGenerator 'org.mybatis.generator:mybatis-generator-core:1.3.3'
+    mybatisGenerator 'org.mybatis.generator:mybatis-generator-maven-plugin:1.3.2'
+    mybatisGenerator 'org.mybatis.spring.boot:mybatis-spring-boot-starter:1.3.2'
+
+    compile "com.alibaba:druid:$druidVersion"
+
+    compile 'redis.clients:jedis:3.2.0'
+
+    // https://mvnrepository.com/artifact/com.google.guava/guava
+    compile group: 'com.google.guava', name: 'guava', version: '28.2-jre'
+    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-redis
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-redis', version: '2.2.6.RELEASE'
+
+    // swagger
+    compile "com.spring4all:swagger-spring-boot-starter:1.8.0.RELEASE"
+    // sentinel
+    compile "com.alibaba.csp:sentinel-core:1.6.0"
+    compile "com.alibaba.csp:sentinel-transport-simple-http:1.6.0"
+
+    runtime('mysql:mysql-connector-java')
+    testCompile("org.springframework.boot:spring-boot-starter-test")
+    testCompile "junit:junit:$junitVersion"
+}

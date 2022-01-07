@@ -1,0 +1,5 @@
+rootProject.name = 'springmybatis'
+include 'demo-springboot'
+include 'spring-redis'
+include 'spring-sentinel'
+
