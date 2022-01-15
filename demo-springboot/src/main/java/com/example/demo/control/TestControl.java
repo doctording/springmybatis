@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.websocket.server.PathParam;
 import java.util.List;
 
 @RestController
@@ -18,6 +19,17 @@ public class TestControl {
     @GetMapping(value = "/test")
     public String getTest() throws Exception {
         return "hello test";
+    }
+
+    @GetMapping(value = "/test/param")
+    public String getTestParam(Integer id, String name) throws Exception {
+        if (id > 0 && id < 128) {
+            return id + "_" + name;
+        }
+        if (id > 1000 || id <= 0) {
+            throw new Exception("id illegal");
+        }
+        return id + ":" + name;
     }
 
     @GetMapping(value = "/test-service")

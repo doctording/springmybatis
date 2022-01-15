@@ -1,12 +1,7 @@
-## 关键词
+## arthas的使用
 
-* idea
-* Java8
-* SpringBoot
-* gradle
-* mybatis
-* alibaba druid
-* alibaba sentinel
+<a target='_blank' href="https://doctording.blog.csdn.net/article/details/114218660">Java工具arthas的使用--结合实际工作
+</a>
 
 ## 数据库&MyBatis
 
