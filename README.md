@@ -1,9 +1,3 @@
-所有项目demo都基于`idea gradle + SpringBoot`来开发构建
-
-源代码见`code`目录，以及源码写的`README.md`，相关知识点如下
-
----
-
 ## 关键词
 
 * idea
@@ -142,9 +136,9 @@ public interface SqlSessionFactory {
 
 ```
 
------什么是SqlSession
+-----什么是SqlSession?
 
-SqlSession表示的是数据库客户端和数据库服务端之间的一种会话，并维护了两者之间的状态信息，能执行sql语句，获取maaper，事务管理
+SqlSession表示的是数据库客户端和数据库服务端之间的一种会话，并维护了两者之间的状态信息，能执行sql语句，获取mapper，事务管理
 
 ```java
 /**
@@ -169,7 +163,7 @@ public SqlSessionTemplate sqlSessionTemplate(SqlSessionFactory sqlSessionFactory
 
 ------什么是SqlSessionTemplate?
 
-SqlSessionTmplate是SqlSession的实现类，线程安全，被spring管理，能结合spring事务管理的
+SqlSessionTemplate是SqlSession的实现类，线程安全，被spring管理，能结合spring事务管理的
 
 ```java
 /**
