@@ -8,7 +8,9 @@ version '1.0-SNAPSHOT'
 sourceCompatibility = 1.8
 
 repositories {
-    mavenCentral()
+    mavenLocal()
+    maven { url 'https://maven.aliyun.com/repository/public/' }
+    //    mavenCentral()
 }
 
 dependencies {
